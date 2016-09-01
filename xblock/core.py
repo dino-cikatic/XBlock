@@ -121,6 +121,7 @@ class XBlock(XmlSerializationMixin, HierarchyMixin, ScopedStorageMixin, RuntimeS
 
     name = String(help="Short name for the block", scope=Scope.settings)
     tags = List(help="Tags for this block", scope=Scope.settings)
+    background_url = String(name="Background URL", help="Background URL for this block", scope=Scope.settings)
 
     @class_lazy
     def _class_tags(cls):  # pylint: disable=no-self-argument
