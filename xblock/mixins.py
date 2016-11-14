@@ -22,10 +22,7 @@ from xblock.exceptions import JsonHandlerError, KeyValueMultiSaveError, XBlockSa
 from xblock.fields import Field, Reference, Scope, ReferenceList
 from xblock.internal import class_lazy, NamedAttributesMetaclass
 
-from django.conf import settings
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-import uuid
+
 
 
 # OrderedDict is used so that namespace attributes are put in predictable order
@@ -627,6 +624,12 @@ class FileUploadMixin(object):
         }
 
     def upload_to_s3(self, file_type, file, xblock_id):
+
+        from django.conf import settings
+        from django.core.files.storage import default_storage
+        from django.core.files.base import ContentFile
+        import uuid
+
         thumbnail_uuid = str(uuid.uuid1())
 
         is_chunked = file.multiple_chunks()
