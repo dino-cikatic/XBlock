@@ -22,6 +22,11 @@ from xblock.exceptions import JsonHandlerError, KeyValueMultiSaveError, XBlockSa
 from xblock.fields import Field, Reference, Scope, ReferenceList
 from xblock.internal import class_lazy, NamedAttributesMetaclass
 
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import uuid
+
 
 # OrderedDict is used so that namespace attributes are put in predictable order
 # This allows for simple string equality assertions in tests and have no other effects
@@ -610,3 +615,27 @@ class ViewsMixin(object):
             True or False
         """
         return hasattr(view, "_supports") and functionality in view._supports  # pylint: disable=protected-access
+
+
+class FileUploadMixin(object):
+
+    def __init__(self, **kwargs):
+        self._file_types = {
+            'THUMBNAIL': '/thumbnails/',
+            'BACKGROUND': '/backgrounds/',
+            'VIDEO': '/videos/'
+        }
+
+    def upload_to_s3(self, file_type, file, xblock_id):
+        thumbnail_uuid = str(uuid.uuid1())
+
+        is_chunked = file.multiple_chunks()
+        if is_chunked:
+            content = ContentFile(file.chunks())
+        else:
+            content = ContentFile(file.read())
+
+        relative_path = default_storage.save(
+            self._file_types[file_type] + xblock_id + '/' + thumbnail_uuid + '_' + file.name,
+            content)
+        return settings.AWS_S3_BASE_URL + settings.AWS_STORAGE_BUCKET_NAME + relative_path

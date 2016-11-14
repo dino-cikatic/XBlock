@@ -16,6 +16,7 @@ from xblock.fields import String, List, Scope
 from xblock.internal import class_lazy
 import xblock.mixins
 from xblock.mixins import (
+    FileUploadMixin,
     ScopedStorageMixin,
     HierarchyMixin,
     RuntimeServicesMixin,
@@ -107,7 +108,7 @@ class SharedBlockBase(Plugin):
 
 
 # -- Base Block
-class XBlock(XmlSerializationMixin, HierarchyMixin, ScopedStorageMixin, RuntimeServicesMixin, HandlersMixin,
+class XBlock(FileUploadMixin, XmlSerializationMixin, HierarchyMixin, ScopedStorageMixin, RuntimeServicesMixin, HandlersMixin,
              IndexInfoMixin, ViewsMixin, SharedBlockBase):
     """Base class for XBlocks.
 
